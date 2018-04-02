@@ -2,8 +2,9 @@ package com.gluten.common
 
 data class URL(val protocol: Protocol,
                val path: String,
-//               val node: Node,
-               val parameters: Map<String, String>) {
+               val method: String,
+               var username: String? = null,
+               var password: String? = null) {
 
     override fun equals(other: Any?): Boolean {
         return super.equals(other)
@@ -18,6 +19,9 @@ data class URL(val protocol: Protocol,
     }
 }
 
-enum class Protocol(val protocol: String) {
-    HTTP("http"), THRIFT("thrift"), GRPC("grpc")
+enum class Protocol(val value: String) {
+    HTTP("http"),
+    HTTPS("https"),
+    THRIFT("thrift"),
+    GRPC("grpc")
 }

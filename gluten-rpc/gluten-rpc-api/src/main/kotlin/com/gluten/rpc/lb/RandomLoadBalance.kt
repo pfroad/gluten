@@ -8,7 +8,7 @@ class RandomLoadBalance: AbstractLoadBalance() {
 
     private val random: Random = Random()
 
-    override fun doSelect(instances: List<Node>, url: URL): Node {
+    override fun doSelect(instances: List<Node>, url: String): Node {
         val isSameWeight: Boolean = instances.map { instance -> instance.weight }.distinct().size == 1
 
         if (isSameWeight) {

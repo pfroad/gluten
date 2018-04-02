@@ -17,6 +17,7 @@
         <module>gluten-rpc-http</module>
         <module>gluten-rpc-thrift</module>
         <module>gluten-rpc-api</module>
+        <module>gluten-rpc-async-http</module>
     </modules>
 
     <properties>

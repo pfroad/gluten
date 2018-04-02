@@ -1,21 +1,11 @@
 package com.gluten.rpc
 
 import com.gluten.common.Node
-import com.gluten.common.URL
 import com.gluten.registry.GlutenRegistry
-import com.gluten.registry.zookeeper.ZookeeperRegistry
 import com.gluten.rpc.lb.LoadBalance
-import com.gluten.rpc.lb.RandomLoadBalance
-
-data class Result(val value: Object,
-                  val exception: Throwable) {
-    fun hasException(): Boolean {
-        return exception != null
-    }
-}
 
 interface Invoker {
-    fun invoke(url: URL): Result?
+    fun invoke(invocation: Invocation): RpcResult?
 }
 
 abstract class AbstractInvoker(private var registry: GlutenRegistry?,
@@ -38,16 +28,20 @@ abstract class AbstractInvoker(private var registry: GlutenRegistry?,
 //        }
 //    }
 
-    override fun invoke(url: URL): Result? {
-        val instances: List<Node> = registry!!.lookup(url)
+    override fun invoke(invocation: Invocation): RpcResult? {
+        val instances: List<Node> = registry!!.lookup(invocation.provider)
 
         if (instances == null || instances.isEmpty())
             return null
 
-        val instance: Node? = loadBalance?.select(instances, url)
+        val instance: Node? = loadBalance?.select(instances, invocation.provider)
 
-        return doInvoke(instance, url)
+        if (instance == null || !instance.isAvailable) {
+            throw RpcException(RpcException.NETWORK_EXCEPTION, "No available service node!")
+        }
+
+        return doInvoke(instance, invocation)
     }
 
-    abstract fun doInvoke(instance: Node?, url: URL): Result?
+    abstract fun doInvoke(instance: Node, invocation: Invocation): RpcResult?
 }

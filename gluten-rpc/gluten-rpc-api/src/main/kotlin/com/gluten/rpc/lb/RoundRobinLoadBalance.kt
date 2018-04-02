@@ -9,13 +9,12 @@ import java.util.concurrent.atomic.AtomicInteger
 class RoundRobinLoadBalance: AbstractLoadBalance() {
     private val sequences: ConcurrentMap<String, AtomicInteger> = ConcurrentHashMap()
 
-    override fun doSelect(instances: List<Node>, url: URL): Node {
-        val serviceKey: String = url.path
-        var sequence: AtomicInteger? = sequences[serviceKey]
+    override fun doSelect(instances: List<Node>, url: String): Node {
+        var sequence: AtomicInteger? = sequences[url]
 
         if (sequence == null) {
-            sequences.putIfAbsent(serviceKey, AtomicInteger())
-            sequence = sequences[serviceKey]
+            sequences.putIfAbsent(url, AtomicInteger())
+            sequence = sequences[url]
         }
 
         val currentSeq: Int = sequence?.getAndIncrement() ?: 0

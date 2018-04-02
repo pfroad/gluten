@@ -39,5 +39,5 @@ interface GlutenRegistry {
      *
      * @param url: request url
      */
-    fun lookup(url: URL): List<Node>
+    fun lookup(provider: String): List<Node>
 }
